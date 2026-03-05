@@ -34,7 +34,11 @@ router.post("/register", async (req, res) => {
             token: generateToken(user._id),
         });
     } catch (error) {
-        console.error(error);
+        console.error("❌ Registration Error:", error.message);
+        if (error.name === "ValidationError") {
+            const firstError = Object.values(error.errors)[0].message;
+            return res.status(400).json({ message: firstError });
+        }
         res.status(500).json({ message: "Server error" });
     }
 });
