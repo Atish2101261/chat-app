@@ -1,0 +1,198 @@
+/* ===== LOGIN PAGE ===== */
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at 30% 20%, rgba(108, 99, 255, 0.15) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 80%, rgba(0, 212, 170, 0.1) 0%, transparent 60%),
+        var(--bg-base);
+    padding: 20px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 40px 36px;
+    box-shadow: var(--shadow-lg), 0 0 80px rgba(108, 99, 255, 0.08);
+    animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.logo-icon {
+    font-size: 32px;
+}
+
+.logo h1 {
+    font-size: 28px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #6c63ff, #00d4aa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.tagline {
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 400;
+}
+
+/* Tabs */
+.tab-switcher {
+    display: flex;
+    background: var(--bg-base);
+    border-radius: var(--radius-md);
+    padding: 4px;
+    margin-bottom: 28px;
+    border: 1px solid var(--border);
+}
+
+.tab {
+    flex: 1;
+    padding: 10px;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all var(--transition);
+}
+
+.tab.active {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 2px 12px var(--accent-glow);
+}
+
+/* Form */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.input-group input {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 13px 16px;
+    color: var(--text-primary);
+    font-size: 15px;
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.input-group input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.error-msg {
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    color: var(--danger);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.btn-primary {
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent), #8b85ff);
+    color: white;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-weight: 600;
+    transition: all var(--transition);
+    box-shadow: 0 4px 16px var(--accent-glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px var(--accent-glow);
+}
+
+.btn-primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.switch-text {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.switch-text span {
+    color: var(--accent);
+    font-weight: 600;
+    cursor: pointer;
+    transition: color var(--transition);
+}
+
+.switch-text span:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
