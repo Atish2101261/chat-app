@@ -9,7 +9,7 @@ services:
       - key: NODE_VERSION
         value: 20
       - key: MONGO_URI
-        sync: false
+        value: mongodb+srv://kallupatel2002_db_user:nHqqgZt1GQFj2KQ0@cluster0.qrzioxu.mongodb.net/chatapp?appName=Cluster0
       - key: JWT_SECRET
         generateValue: true
       - key: CLIENT_URL
