@@ -1,0 +1,11 @@
+{
+    "site_id": "8a572f34-7ac6-47dd-ba01-90a1fa76dc5b",
+    "body": {
+        "build_settings": {
+            "provider": "github",
+            "repo_path": "Atish2101261/chat-app",
+            "repo_url": "https://github.com/Atish2101261/chat-app",
+            "repo_branch": "main"
+        }
+    }
+}

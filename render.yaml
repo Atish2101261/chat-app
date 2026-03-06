@@ -2,9 +2,9 @@ services:
   - type: web
     name: atish-chat-app-backend
     env: node
-    rootDir: backend
-    buildCommand: npm install
-    startCommand: npm start
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    healthCheckPath: /api/health
     envVars:
       - key: NODE_VERSION
         value: 20
@@ -14,5 +14,4 @@ services:
         generateValue: true
       - key: CLIENT_URL
         value: https://atish-chat-app.netlify.app
-      - key: PORT
-        value: 5000
+

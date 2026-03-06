@@ -1,0 +1,16 @@
+{
+	"telemetryDisabled": false,
+	"cliId": "8c8824ed-0389-4a34-92ba-5843d8c5aa3c",
+	"userId": "675e938fefc0ae2f53e8d053",
+	"users": {
+		"675e938fefc0ae2f53e8d053": {
+			"id": "675e938fefc0ae2f53e8d053",
+			"name": "Atish Patel",
+			"email": "atishpatel2002@gmail.com",
+			"auth": {
+				"token": "nfc_R4PXsjhg9mKFsVrYsRbQ9E3hdEZYWKA45eee",
+				"github": {}
+			}
+		}
+	}
+}
