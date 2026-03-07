@@ -6,6 +6,7 @@ import RoomList from "../components/RoomList";
 import MessageList from "../components/MessageList";
 import MessageInput from "../components/MessageInput";
 import OnlineUsers from "../components/OnlineUsers";
+import WallpaperPicker from "../components/WallpaperPicker";
 import "../styles/ChatPage.css";
 
 const ROOMS = ["general", "tech", "random"];
@@ -18,7 +19,31 @@ const ChatPage = () => {
     const [activeRoom, setActiveRoom] = useState("general");
     const [messages, setMessages] = useState({});
     const [typingUsers, setTypingUsers] = useState({});
+    const [showWallpaperPicker, setShowWallpaperPicker] = useState(false);
+    const [showSidebar, setShowSidebar] = useState(false); // mobile sidebar toggle
+    const [wallpaper, setWallpaper] = useState(() => {
+        try {
+            const saved = localStorage.getItem("chat_wallpaper");
+            return saved ? JSON.parse(saved) : null;
+        } catch { return null; }
+    });
     const prevRoom = useRef(null);
+
+    // Build wallpaper style
+    const wallpaperStyle = wallpaper
+        ? wallpaper.type === "image"
+            ? { backgroundImage: `url(${wallpaper.value})`, backgroundSize: "cover", backgroundPosition: "center" }
+            : { background: wallpaper.value }
+        : {};
+
+    const handleWallpaperChange = (newWallpaper) => {
+        setWallpaper(newWallpaper);
+        if (newWallpaper) {
+            localStorage.setItem("chat_wallpaper", JSON.stringify(newWallpaper));
+        } else {
+            localStorage.removeItem("chat_wallpaper");
+        }
+    };
 
     useEffect(() => {
         if (!socket) return;
@@ -105,14 +130,24 @@ const ChatPage = () => {
         }
     };
 
+    const handleRoomSelect = (room) => {
+        setActiveRoom(room);
+        setShowSidebar(false); // close sidebar on mobile after room select
+    };
+
     const currentTyping = typingUsers[activeRoom] || [];
 
     return (
         <div className="chat-page">
-            <aside className="sidebar">
+            {/* Mobile overlay */}
+            {showSidebar && <div className="sidebar-overlay" onClick={() => setShowSidebar(false)} />}
+
+            {/* Sidebar */}
+            <aside className={`sidebar ${showSidebar ? "sidebar-open" : ""}`}>
                 <div className="sidebar-header">
                     <span className="logo-sm">💬</span>
                     <span className="brand">ChatSphere</span>
+                    <button className="sidebar-close-btn" onClick={() => setShowSidebar(false)}>✕</button>
                 </div>
                 <div className="sidebar-user">
                     <div className="avatar">{user?.username?.[0]?.toUpperCase()}</div>
@@ -123,39 +158,53 @@ const ChatPage = () => {
                         </span>
                     </div>
                 </div>
-                <RoomList rooms={ROOMS} activeRoom={activeRoom} onRoomSelect={setActiveRoom} />
+                <RoomList rooms={ROOMS} activeRoom={activeRoom} onRoomSelect={handleRoomSelect} />
                 <OnlineUsers users={onlineUsers} currentUser={user?.username} />
                 <button id="logout-btn" className="logout-btn" onClick={handleLogout}>
                     Sign Out
                 </button>
             </aside>
 
+            {/* Main Chat Area */}
             <main className="chat-main">
                 <div className="chat-header">
                     <div className="room-info">
+                        {/* Hamburger for mobile */}
+                        <button className="hamburger-btn" onClick={() => setShowSidebar(true)}>☰</button>
                         <span className="room-hash">#</span>
                         <h2 className="room-name">{activeRoom}</h2>
                     </div>
                     <div className="header-right">
                         <span className="online-count">{onlineUsers.length} online</span>
+                        {/* Wallpaper button */}
+                        <button
+                            className="wallpaper-header-btn"
+                            onClick={() => setShowWallpaperPicker(true)}
+                            title="Change wallpaper"
+                        >
+                            🖼️
+                        </button>
                     </div>
                 </div>
 
-                <MessageList
-                    messages={messages[activeRoom] || []}
-                    currentUser={user?.username}
-                    onEditMessage={handleEditMessage}
-                />
-
-                {currentTyping.length > 0 && (
-                    <div className="typing-indicator">
-                        <span className="typing-dots">
-                            <b>{currentTyping.join(", ")}</b>{" "}
-                            {currentTyping.length === 1 ? "is" : "are"} typing
-                            <span className="dot-anim">...</span>
-                        </span>
-                    </div>
-                )}
+                {/* Chat area with wallpaper */}
+                <div className="chat-area-wallpaper" style={wallpaperStyle}>
+                    {wallpaper && <div className="wallpaper-overlay" />}
+                    <MessageList
+                        messages={messages[activeRoom] || []}
+                        currentUser={user?.username}
+                        onEditMessage={handleEditMessage}
+                    />
+                    {currentTyping.length > 0 && (
+                        <div className="typing-indicator">
+                            <span className="typing-dots">
+                                <b>{currentTyping.join(", ")}</b>{" "}
+                                {currentTyping.length === 1 ? "is" : "are"} typing
+                                <span className="dot-anim">...</span>
+                            </span>
+                        </div>
+                    )}
+                </div>
 
                 <MessageInput
                     onSend={sendMessage}
@@ -164,6 +213,15 @@ const ChatPage = () => {
                     username={user?.username}
                 />
             </main>
+
+            {/* Wallpaper Picker Modal */}
+            {showWallpaperPicker && (
+                <WallpaperPicker
+                    wallpaper={wallpaper}
+                    onWallpaperChange={handleWallpaperChange}
+                    onClose={() => setShowWallpaperPicker(false)}
+                />
+            )}
         </div>
     );
 };
