@@ -34,12 +34,15 @@ router.post("/register", async (req, res) => {
             token: generateToken(user._id),
         });
     } catch (error) {
-        console.error("❌ Registration Error:", error.message);
+        console.error("❌ Registration Error FULL:", error);
         if (error.name === "ValidationError") {
             const firstError = Object.values(error.errors)[0].message;
             return res.status(400).json({ message: firstError });
         }
-        res.status(500).json({ message: "Server error" });
+        if (error.code === 11000) {
+            return res.status(400).json({ message: "Username already taken" });
+        }
+        res.status(500).json({ message: "Server error", detail: error.message });
     }
 });
 

@@ -1,4 +1,5 @@
 require("dotenv").config();
+const mongoose = require("mongoose");
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -45,7 +46,9 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/health", (req, res) => {
-    res.json({ status: "OK", timestamp: new Date() });
+    const dbState = mongoose.connection.readyState;
+    const dbStatus = ["disconnected", "connected", "connecting", "disconnecting"][dbState] || "unknown";
+    res.json({ status: "OK", timestamp: new Date(), db: dbStatus });
 });
 
 // 404 handler for debugging untracked routes
