@@ -1,6 +1,6 @@
 import React from "react";
 
-const OnlineUsers = ({ users, currentUser }) => {
+const OnlineUsers = ({ users, currentUser, onCall }) => {
     return (
         <div className="online-users">
             <h3 className="section-title">Online — {users.length}</h3>
@@ -16,7 +16,23 @@ const OnlineUsers = ({ users, currentUser }) => {
                                 <span className="you-badge"> (you)</span>
                             )}
                         </span>
-                        <span className="online-dot" title="Online" />
+                        {u.username !== currentUser && (
+                            <div className="call-btns">
+                                <button
+                                    className="user-call-btn"
+                                    onClick={() => onCall(u.username, "audio")}
+                                    title={`Voice call ${u.username}`}
+                                >📞</button>
+                                <button
+                                    className="user-call-btn"
+                                    onClick={() => onCall(u.username, "video")}
+                                    title={`Video call ${u.username}`}
+                                >📹</button>
+                            </div>
+                        )}
+                        {u.username === currentUser && (
+                            <span className="online-dot" title="Online" />
+                        )}
                     </li>
                 ))}
                 {users.length === 0 && (

@@ -149,6 +149,65 @@ const socketHandler = (io) => {
             socket.to(room).emit("user_stop_typing", { username: user.username, room });
         });
 
+        // ----- WEBRTC CALL SIGNALING -----
+        // Helper: find socketId by username
+        const findSocketIdByUsername = (username) => {
+            for (const [sid, u] of onlineUsers.entries()) {
+                if (u.username === username) return sid;
+            }
+            return null;
+        };
+
+        // Initiate call: caller → callee
+        socket.on("call_user", ({ targetUsername, callType }) => {
+            const targetSocketId = findSocketIdByUsername(targetUsername);
+            if (!targetSocketId) {
+                return socket.emit("call_error", { message: `${targetUsername} is not online` });
+            }
+            io.to(targetSocketId).emit("incoming_call", {
+                callerUsername: user.username,
+                callerSocketId: socket.id,
+                callType, // "audio" | "video"
+            });
+            console.log(`📞 ${user.username} calling ${targetUsername} [${callType}]`);
+        });
+
+        // Callee accepted
+        socket.on("call_answered", ({ callerSocketId, callType }) => {
+            io.to(callerSocketId).emit("call_accepted", {
+                answererSocketId: socket.id,
+                answererUsername: user.username,
+                callType,
+            });
+        });
+
+        // Callee rejected
+        socket.on("call_rejected", ({ callerSocketId }) => {
+            io.to(callerSocketId).emit("call_rejected", { by: user.username });
+        });
+
+        // Relay: WebRTC offer
+        socket.on("webrtc_offer", ({ targetSocketId, offer }) => {
+            io.to(targetSocketId).emit("webrtc_offer", { offer, fromSocketId: socket.id });
+        });
+
+        // Relay: WebRTC answer
+        socket.on("webrtc_answer", ({ targetSocketId, answer }) => {
+            io.to(targetSocketId).emit("webrtc_answer", { answer, fromSocketId: socket.id });
+        });
+
+        // Relay: ICE candidate
+        socket.on("ice_candidate", ({ targetSocketId, candidate }) => {
+            io.to(targetSocketId).emit("ice_candidate", { candidate, fromSocketId: socket.id });
+        });
+
+        // End call
+        socket.on("end_call", ({ targetSocketId }) => {
+            io.to(targetSocketId).emit("call_ended", { by: user.username });
+        });
+
+
+
         // ----- DISCONNECT -----
         socket.on("disconnect", async () => {
             console.log(`🔴 ${user.username} disconnected [${socket.id}]`);
