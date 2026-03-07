@@ -23,14 +23,12 @@ const ChatPage = () => {
     useEffect(() => {
         if (!socket) return;
 
-        // Leave previous room, join new room
         if (prevRoom.current && prevRoom.current !== activeRoom) {
             socket.emit("leave_room", { room: prevRoom.current });
         }
         socket.emit("join_room", { room: activeRoom });
         prevRoom.current = activeRoom;
 
-        // Reset typing for new room
         setTypingUsers((prev) => ({ ...prev, [activeRoom]: [] }));
 
         const handleHistory = ({ room, messages: msgs }) => {
@@ -42,6 +40,18 @@ const ChatPage = () => {
                 ...prev,
                 [msg.room]: [...(prev[msg.room] || []), msg],
             }));
+        };
+
+        const handleMessageEdited = ({ _id, content, edited, editedAt }) => {
+            setMessages((prev) => {
+                const updated = {};
+                for (const room in prev) {
+                    updated[room] = prev[room].map((msg) =>
+                        msg._id === _id ? { ...msg, content, edited, editedAt } : msg
+                    );
+                }
+                return updated;
+            });
         };
 
         const handleTyping = ({ username, room }) => {
@@ -62,12 +72,14 @@ const ChatPage = () => {
 
         socket.on("message_history", handleHistory);
         socket.on("receive_message", handleNewMessage);
+        socket.on("message_edited", handleMessageEdited);
         socket.on("user_typing", handleTyping);
         socket.on("user_stop_typing", handleStopTyping);
 
         return () => {
             socket.off("message_history", handleHistory);
             socket.off("receive_message", handleNewMessage);
+            socket.off("message_edited", handleMessageEdited);
             socket.off("user_typing", handleTyping);
             socket.off("user_stop_typing", handleStopTyping);
         };
@@ -81,9 +93,15 @@ const ChatPage = () => {
         navigate("/");
     };
 
-    const sendMessage = (content) => {
-        if (socket && content.trim()) {
-            socket.emit("send_message", { room: activeRoom, content });
+    const sendMessage = (content, mediaUrl = null, mediaType = null) => {
+        if (socket && (content?.trim() || mediaUrl)) {
+            socket.emit("send_message", { room: activeRoom, content, mediaUrl, mediaType });
+        }
+    };
+
+    const handleEditMessage = (messageId, newContent) => {
+        if (socket && newContent?.trim()) {
+            socket.emit("edit_message", { messageId, content: newContent, room: activeRoom });
         }
     };
 
@@ -91,13 +109,11 @@ const ChatPage = () => {
 
     return (
         <div className="chat-page">
-            {/* Sidebar */}
             <aside className="sidebar">
                 <div className="sidebar-header">
                     <span className="logo-sm">💬</span>
                     <span className="brand">ChatSphere</span>
                 </div>
-
                 <div className="sidebar-user">
                     <div className="avatar">{user?.username?.[0]?.toUpperCase()}</div>
                     <div className="user-info">
@@ -107,16 +123,13 @@ const ChatPage = () => {
                         </span>
                     </div>
                 </div>
-
                 <RoomList rooms={ROOMS} activeRoom={activeRoom} onRoomSelect={setActiveRoom} />
                 <OnlineUsers users={onlineUsers} currentUser={user?.username} />
-
                 <button id="logout-btn" className="logout-btn" onClick={handleLogout}>
                     Sign Out
                 </button>
             </aside>
 
-            {/* Main Chat Area */}
             <main className="chat-main">
                 <div className="chat-header">
                     <div className="room-info">
@@ -124,15 +137,14 @@ const ChatPage = () => {
                         <h2 className="room-name">{activeRoom}</h2>
                     </div>
                     <div className="header-right">
-                        <span className="online-count">
-                            {onlineUsers.length} online
-                        </span>
+                        <span className="online-count">{onlineUsers.length} online</span>
                     </div>
                 </div>
 
                 <MessageList
                     messages={messages[activeRoom] || []}
                     currentUser={user?.username}
+                    onEditMessage={handleEditMessage}
                 />
 
                 {currentTyping.length > 0 && (

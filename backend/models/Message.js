@@ -14,9 +14,26 @@ const messageSchema = new mongoose.Schema(
         },
         content: {
             type: String,
-            required: true,
+            default: "",
             trim: true,
-            maxlength: 2000,
+            maxlength: 5000,
+        },
+        mediaUrl: {
+            type: String,
+            default: null,
+        },
+        mediaType: {
+            type: String,
+            enum: ["image", "video", null],
+            default: null,
+        },
+        edited: {
+            type: Boolean,
+            default: false,
+        },
+        editedAt: {
+            type: Date,
+            default: null,
         },
         timestamp: {
             type: Date,

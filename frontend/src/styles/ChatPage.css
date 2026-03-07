@@ -579,3 +579,207 @@
     margin-top: 6px;
     padding-left: 2px;
 }
+
+/* ===== ATTACH BUTTON ===== */
+.attach-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition);
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.attach-btn:hover {
+    background: var(--bg-hover);
+    color: var(--accent);
+}
+
+/* ===== MEDIA PREVIEW (before send) ===== */
+.media-preview {
+    position: relative;
+    margin-bottom: 8px;
+    display: inline-block;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 2px solid var(--accent);
+    max-width: 260px;
+}
+
+.media-preview-img {
+    display: block;
+    max-width: 260px;
+    max-height: 160px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+}
+
+.media-preview-video {
+    display: block;
+    max-width: 260px;
+    max-height: 160px;
+    border-radius: var(--radius-sm);
+}
+
+.media-remove-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    transition: background var(--transition);
+}
+
+.media-remove-btn:hover {
+    background: rgba(255,60,60,0.9);
+}
+
+/* ===== MEDIA IN MESSAGE BUBBLE ===== */
+.msg-media-img {
+    display: block;
+    max-width: 280px;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 4px;
+    transition: opacity 0.2s;
+}
+
+.msg-media-img:hover {
+    opacity: 0.9;
+}
+
+.msg-media-video {
+    display: block;
+    max-width: 280px;
+    max-height: 220px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+}
+
+.msg-text {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* ===== EDITED BADGE ===== */
+.edited-badge {
+    font-size: 11px;
+    opacity: 0.65;
+    font-style: italic;
+    margin-left: 4px;
+}
+
+/* ===== EDIT BUTTON ===== */
+.edit-btn {
+    background: transparent;
+    border: none;
+    font-size: 13px;
+    cursor: pointer;
+    opacity: 0;
+    margin-left: 6px;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transition: opacity 0.2s, background 0.2s;
+    vertical-align: middle;
+}
+
+.message-bubble:hover .edit-btn {
+    opacity: 1;
+}
+
+.edit-btn:hover {
+    background: rgba(255,255,255,0.15);
+}
+
+/* ===== EDIT FORM ===== */
+.edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.edit-textarea {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 6px;
+    color: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 6px 10px;
+    resize: none;
+    min-width: 180px;
+    outline: none;
+}
+
+.bubble-other .edit-textarea {
+    background: var(--bg-hover);
+    border-color: var(--accent);
+    color: var(--text-primary);
+}
+
+.edit-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.edit-save-btn, .edit-cancel-btn {
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all var(--transition);
+}
+
+.edit-save-btn {
+    background: var(--accent);
+    color: white;
+}
+
+.edit-save-btn:hover {
+    background: var(--accent-hover);
+}
+
+.edit-cancel-btn {
+    background: transparent;
+    color: inherit;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.bubble-other .edit-cancel-btn {
+    border-color: var(--border);
+    color: var(--text-secondary);
+}
+
+.edit-cancel-btn:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+/* Upload spinner */
+.upload-spinner {
+    font-size: 16px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}

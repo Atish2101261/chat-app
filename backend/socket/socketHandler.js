@@ -66,34 +66,66 @@ const socketHandler = (io) => {
         });
 
         // ----- SEND MESSAGE -----
-        socket.on("send_message", async ({ room, content }) => {
-            if (!content || !content.trim()) return;
+        socket.on("send_message", async ({ room, content, mediaUrl, mediaType }) => {
+            if (!content?.trim() && !mediaUrl) return;
 
             try {
-                // Persist message to MongoDB
                 const message = await Message.create({
                     sender: user._id,
                     room,
-                    content: content.trim(),
+                    content: content?.trim() || "",
+                    mediaUrl: mediaUrl || null,
+                    mediaType: mediaType || null,
                     timestamp: new Date(),
                 });
 
-                // Populate sender info
                 const populatedMessage = await message.populate("sender", "username");
 
-                // Broadcast to all clients in the room (including sender)
                 io.to(room).emit("receive_message", {
                     _id: populatedMessage._id,
                     sender: { _id: user._id, username: user.username },
                     room,
                     content: populatedMessage.content,
+                    mediaUrl: populatedMessage.mediaUrl,
+                    mediaType: populatedMessage.mediaType,
+                    edited: false,
                     timestamp: populatedMessage.timestamp,
                 });
 
-                console.log(`💬 [${room}] ${user.username}: ${content.trim()}`);
+                console.log(`💬 [${room}] ${user.username}: ${content?.trim() || "[media]"}`);
             } catch (err) {
                 console.error("Error saving message:", err.message);
                 socket.emit("error", { message: "Failed to send message" });
+            }
+        });
+
+        // ----- EDIT MESSAGE -----
+        socket.on("edit_message", async ({ messageId, content, room }) => {
+            if (!content?.trim()) return;
+            try {
+                const message = await Message.findById(messageId);
+                if (!message) return socket.emit("error", { message: "Message not found" });
+                if (message.sender.toString() !== user._id.toString()) {
+                    return socket.emit("error", { message: "Not authorized" });
+                }
+
+                message.content = content.trim();
+                message.edited = true;
+                message.editedAt = new Date();
+                await message.save();
+
+                io.to(room).emit("message_edited", {
+                    _id: messageId,
+                    content: message.content,
+                    edited: true,
+                    editedAt: message.editedAt,
+                    room,
+                });
+
+                console.log(`✏️ [${room}] ${user.username} edited message ${messageId}`);
+            } catch (err) {
+                console.error("Error editing message:", err.message);
+                socket.emit("error", { message: "Failed to edit message" });
             }
         });
 
