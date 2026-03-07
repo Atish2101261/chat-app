@@ -13,5 +13,5 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: CLIENT_URL
-        value: https://atish-chat-app.netlify.app
+        value: https://atishchat.netlify.app
 
